@@ -4,7 +4,7 @@
 
 const express = require('express')
 const cors = require('cors')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -41,10 +41,24 @@ async function run() {
             res.send(result);
         })
 
+        app.get('/teacher/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id: new ObjectId(id)}
+            const result = await teacherCollection.findOne(query);
+            res.send(result);
+        } )
+
         app.post('/teacher', async(req, res) => {
             const addTeacher = req.body;
             console.log(addTeacher);
             const result = await teacherCollection.insertOne(addTeacher);
+            res.send(result);
+        })
+
+        app.delete('/teacher/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await teacherCollection.deleteOne(query);
             res.send(result);
         })
 
@@ -61,6 +75,13 @@ async function run() {
             const addStudent = req.body;
             console.log(addStudent);
             const result = await studentCollection.insertOne(addStudent);
+            res.send(result);
+        })
+
+        app.delete('/student/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await studentCollection.deleteOne(query);
             res.send(result);
         })
 
