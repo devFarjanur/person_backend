@@ -43,7 +43,7 @@ async function run() {
 
         app.get('/teacher/:id', async(req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
+            const query = {_id: new ObjectId(id)};
             const result = await teacherCollection.findOne(query);
             res.send(result);
         } )
@@ -55,6 +55,23 @@ async function run() {
             res.send(result);
         })
 
+        app.put('/teacher/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = {_id: new ObjectId(id)};
+            const options = { upsert: true };
+            const updatedTeacher = req.body;
+            const teacher = {
+                $set: {
+                    name: updatedTeacher.name,
+                    address: updatedTeacher.address
+                }
+            }
+
+            const result = await teacherCollection.updateOne( filter, teacher, options );
+            res.send(result);
+
+        })
+
         app.delete('/teacher/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
@@ -64,10 +81,19 @@ async function run() {
 
         const studentCollection = client.db('person').collection('student');
 
+
+
         app.get('/student', async(req, res) => {
             const cursor = studentCollection.find();
             const result = await cursor.toArray();
             res.send(result);
+        })
+
+        app.get('/student/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await studentCollection.findOne(query);
+            res.send(result)
         })
 
 
@@ -75,6 +101,22 @@ async function run() {
             const addStudent = req.body;
             console.log(addStudent);
             const result = await studentCollection.insertOne(addStudent);
+            res.send(result);
+        })
+
+        app.put('/student/:id', async(req, res) => {
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id)};
+            const options = { upsert: true };
+            const updatedStudent = req.body;
+            const student = {
+                $set: {
+                    name: updatedStudent.name,
+                    address: updatedStudent.address
+                }
+            }
+
+            const result = await studentCollection.updateOne( filter, student, options );
             res.send(result);
         })
 
